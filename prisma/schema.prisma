@@ -1,0 +1,66 @@
+// Prisma schema for Taylor's Model Management
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 모델 카테고리 Enum
+enum Category {
+  ALL
+  INTOWN
+  UPCOMING
+}
+
+// 모델 테이블
+model Model {
+  id           String    @id @default(uuid())
+  name         String
+  slug         String    @unique
+  category     Category
+  nationality  String?
+  profileImage String?
+  images       Json?
+  bio          String?   @db.Text
+  height       String?
+  measurements String?
+  instagram    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  archives     Archive[]
+
+  @@index([category])
+  @@index([slug])
+}
+
+// 아카이브 테이블
+model Archive {
+  id        String   @id @default(uuid())
+  title     String
+  brand     String?
+  images    Json
+  modelId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  model     Model    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([modelId])
+}
+
+// 관리자 테이블
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
