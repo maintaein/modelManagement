@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server';
 export default withAuth(
   function middleware(req) {
     // 인증된 사용자만 통과
+    console.log('proxy', req.nextUrl.pathname);
     return NextResponse.next();
   },
   {

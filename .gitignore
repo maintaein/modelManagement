@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+.nyc_output/
+junit.xml
+*.lcov
+jest-results.json
 
 # next.js
 /.next/
@@ -40,6 +44,13 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# cypress
+cypress/videos/
+cypress/screenshots/
+
+# lighthouse
+.lighthouseci/
 
 # typescript
 *.tsbuildinfo
