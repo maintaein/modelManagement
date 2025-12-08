@@ -1,8 +1,32 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, type ReactNode, type CSSProperties } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+
+type Direction = 'vertical' | 'horizontal';
+
+interface AnimatedContentProps {
+  children: ReactNode;
+  container?: HTMLElement | null;
+  distance?: number;
+  direction?: Direction;
+  reverse?: boolean;
+  duration?: number;
+  ease?: string;
+  initialOpacity?: number;
+  animateOpacity?: boolean;
+  scale?: number;
+  threshold?: number;
+  delay?: number;
+  disappearAfter?: number;
+  disappearDuration?: number;
+  disappearEase?: string;
+  onComplete?: () => void;
+  onDisappearanceComplete?: () => void;
+  className?: string;
+  style?: CSSProperties;
+}
 
 const AnimatedContent = ({
   children,
@@ -23,19 +47,16 @@ const AnimatedContent = ({
   onComplete,
   onDisappearanceComplete,
   className = '',
+  style,
   ...props
-}) => {
-  const ref = useRef(null);
+}: AnimatedContentProps) => {
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    let scrollerTarget = container || document.getElementById('snap-main-container') || null;
-
-    if (typeof scrollerTarget === 'string') {
-      scrollerTarget = document.querySelector(scrollerTarget);
-    }
+    const scrollerTarget: HTMLElement | Window | null = container || null;
 
     const axis = direction === 'horizontal' ? 'x' : 'y';
     const offset = reverse ? -distance : distance;
@@ -107,7 +128,7 @@ const AnimatedContent = ({
   ]);
 
   return (
-    <div ref={ref} className={className} style={{ visibility: 'hidden' }} {...props}>
+    <div ref={ref} className={className} style={{ visibility: 'hidden', ...style }} {...props}>
       {children}
     </div>
   );

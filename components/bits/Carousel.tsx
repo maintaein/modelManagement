@@ -1,11 +1,27 @@
-import { useEffect, useState, useRef } from 'react';
-import { motion, useMotionValue, useTransform } from 'motion/react';
-// replace icons with your own if needed
+import { useEffect, useState, useRef, useMemo, type ReactNode } from 'react';
+import { motion, useMotionValue, useTransform, type PanInfo } from 'motion/react';
 import { FiCircle, FiCode, FiFileText, FiLayers, FiLayout } from 'react-icons/fi';
 
 import './Carousel.css';
 
-const DEFAULT_ITEMS = [
+interface CarouselItem {
+  title: string;
+  description: string;
+  id: number;
+  icon: ReactNode;
+}
+
+interface CarouselProps {
+  items?: CarouselItem[];
+  baseWidth?: number;
+  autoplay?: boolean;
+  autoplayDelay?: number;
+  pauseOnHover?: boolean;
+  loop?: boolean;
+  round?: boolean;
+}
+
+const DEFAULT_ITEMS: CarouselItem[] = [
   {
     title: 'Text Animations',
     description: 'Cool text animations for your projects.',
@@ -41,7 +57,7 @@ const DEFAULT_ITEMS = [
 const DRAG_BUFFER = 0;
 const VELOCITY_THRESHOLD = 500;
 const GAP = 16;
-const SPRING_OPTIONS = { type: 'spring', stiffness: 300, damping: 30 };
+const SPRING_OPTIONS = { type: 'spring' as const, stiffness: 300, damping: 30 };
 
 export default function Carousel({
   items = DEFAULT_ITEMS,
@@ -51,18 +67,19 @@ export default function Carousel({
   pauseOnHover = false,
   loop = false,
   round = false
-}) {
+}: CarouselProps) {
   const containerPadding = 16;
   const itemWidth = baseWidth - containerPadding * 2;
   const trackItemOffset = itemWidth + GAP;
 
-  const carouselItems = loop ? [...items, items[0]] : items;
+  const carouselItems = useMemo(() => (loop ? [...items, items[0]] : items), [loop, items]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const x = useMotionValue(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (pauseOnHover && containerRef.current) {
       const container = containerRef.current;
@@ -105,7 +122,7 @@ export default function Carousel({
     }
   };
 
-  const handleDragEnd = (_, info) => {
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
     const offset = info.offset.x;
     const velocity = info.velocity.x;
     if (offset < -DRAG_BUFFER || velocity < -VELOCITY_THRESHOLD) {
@@ -158,10 +175,14 @@ export default function Carousel({
         onAnimationComplete={handleAnimationComplete}
       >
         {carouselItems.map((item, index) => {
-          const range = [-(index + 1) * trackItemOffset, -index * trackItemOffset, -(index - 1) * trackItemOffset];
+          const range = [
+            -(index + 1) * trackItemOffset,
+            -index * trackItemOffset,
+            -(index - 1) * trackItemOffset
+          ];
           const outputRange = [90, 0, -90];
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           const rotateY = useTransform(x, range, outputRange, { clamp: false });
+
           return (
             <motion.div
               key={index}

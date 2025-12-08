@@ -1,10 +1,19 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, type ReactNode, type MouseEvent } from 'react';
 import { motion, useInView } from 'motion/react';
 import './AnimatedList.css';
 
-const AnimatedItem = ({ children, delay = 0, index, onMouseEnter, onClick }) => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { amount: 0.5, triggerOnce: false });
+interface AnimatedItemProps {
+  children: ReactNode;
+  delay?: number;
+  index: number;
+  onMouseEnter: () => void;
+  onClick: () => void;
+}
+
+const AnimatedItem = ({ children, delay = 0, index, onMouseEnter, onClick }: AnimatedItemProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.5, once: false });
+
   return (
     <motion.div
       ref={ref}
@@ -21,7 +30,18 @@ const AnimatedItem = ({ children, delay = 0, index, onMouseEnter, onClick }) => 
   );
 };
 
-const AnimatedList = ({
+interface AnimatedListProps<T> {
+  items?: T[];
+  onItemSelect?: (item: T, index: number) => void;
+  showGradients?: boolean;
+  enableArrowNavigation?: boolean;
+  className?: string;
+  itemClassName?: string;
+  displayScrollbar?: boolean;
+  initialSelectedIndex?: number;
+}
+
+const AnimatedList = <T extends ReactNode>({
   items = [
     'Item 1',
     'Item 2',
@@ -38,7 +58,7 @@ const AnimatedList = ({
     'Item 13',
     'Item 14',
     'Item 15'
-  ],
+  ] as T[],
   onItemSelect,
   showGradients = true,
   enableArrowNavigation = true,
@@ -46,19 +66,19 @@ const AnimatedList = ({
   itemClassName = '',
   displayScrollbar = true,
   initialSelectedIndex = -1
-}) => {
-  const listRef = useRef(null);
+}: AnimatedListProps<T>) => {
+  const listRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
   const [keyboardNav, setKeyboardNav] = useState(false);
   const [topGradientOpacity, setTopGradientOpacity] = useState(0);
   const [bottomGradientOpacity, setBottomGradientOpacity] = useState(1);
 
-  const handleItemMouseEnter = useCallback(index => {
+  const handleItemMouseEnter = useCallback((index: number) => {
     setSelectedIndex(index);
   }, []);
 
   const handleItemClick = useCallback(
-    (item, index) => {
+    (item: T, index: number) => {
       setSelectedIndex(index);
       if (onItemSelect) {
         onItemSelect(item, index);
@@ -67,8 +87,9 @@ const AnimatedList = ({
     [onItemSelect]
   );
 
-  const handleScroll = useCallback(e => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
+  const handleScroll = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    const { scrollTop, scrollHeight, clientHeight } = target;
     setTopGradientOpacity(Math.min(scrollTop / 50, 1));
     const bottomDistance = scrollHeight - (scrollTop + clientHeight);
     setBottomGradientOpacity(scrollHeight <= clientHeight ? 0 : Math.min(bottomDistance / 50, 1));
@@ -76,7 +97,8 @@ const AnimatedList = ({
 
   useEffect(() => {
     if (!enableArrowNavigation) return;
-    const handleKeyDown = e => {
+
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey)) {
         e.preventDefault();
         setKeyboardNav(true);
@@ -101,14 +123,17 @@ const AnimatedList = ({
 
   useEffect(() => {
     if (!keyboardNav || selectedIndex < 0 || !listRef.current) return;
+
     const container = listRef.current;
-    const selectedItem = container.querySelector(`[data-index="${selectedIndex}"]`);
+    const selectedItem = container.querySelector(`[data-index="${selectedIndex}"]`) as HTMLElement | null;
+
     if (selectedItem) {
       const extraMargin = 50;
       const containerScrollTop = container.scrollTop;
       const containerHeight = container.clientHeight;
       const itemTop = selectedItem.offsetTop;
       const itemBottom = itemTop + selectedItem.offsetHeight;
+
       if (itemTop < containerScrollTop + extraMargin) {
         container.scrollTo({ top: itemTop - extraMargin, behavior: 'smooth' });
       } else if (itemBottom > containerScrollTop + containerHeight - extraMargin) {
@@ -119,7 +144,6 @@ const AnimatedList = ({
       }
     }
 
-    // 스크롤 완료 후 keyboardNav 상태 리셋 (cascading render 방지)
     const timer = setTimeout(() => {
       setKeyboardNav(false);
     }, 0);
@@ -129,7 +153,11 @@ const AnimatedList = ({
 
   return (
     <div className={`scroll-list-container ${className}`}>
-      <div ref={listRef} className={`scroll-list ${!displayScrollbar ? 'no-scrollbar' : ''}`} onScroll={handleScroll}>
+      <div
+        ref={listRef}
+        className={`scroll-list ${!displayScrollbar ? 'no-scrollbar' : ''}`}
+        onScroll={handleScroll}
+      >
         {items.map((item, index) => (
           <AnimatedItem
             key={index}
