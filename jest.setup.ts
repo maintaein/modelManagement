@@ -21,8 +21,11 @@ jest.mock('next-auth/react', () => ({
 // Next.js Image 모킹
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-    return React.createElement('img', props);
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement> & { fill?: boolean; priority?: boolean; sizes?: string; onLoad?: () => void }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { fill, priority, sizes, onLoad, ...imgProps } = props;
+    // fill, priority, sizes는 Next.js Image의 커스텀 속성이므로 제거
+    return React.createElement('img', imgProps);
   },
 }));
 
