@@ -47,6 +47,14 @@ const customJestConfig: Config = {
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
       },
+      transform: {
+        '^.+\\.(ts|tsx)$': ['@swc/jest', {
+          jsc: {
+            parser: { syntax: 'typescript', tsx: true },
+            transform: { react: { runtime: 'automatic' } },
+          },
+        }],
+      },
     },
   ],
 };

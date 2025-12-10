@@ -127,5 +127,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   }
 }

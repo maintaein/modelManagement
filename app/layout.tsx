@@ -26,10 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={{ fontFamily: "'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>

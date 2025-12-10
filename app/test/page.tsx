@@ -18,7 +18,15 @@ import AnimatedList from '@/components/bits/AnimatedList';
 import Carousel from '@/components/bits/Carousel';
 import FadeContent from '@/components/bits/FadeContent';
 import { SegmentControl, ModelCard, LightboxGallery, ImageUploader } from '@/components/molecules';
-import type { SegmentOption, GalleryImage } from '@/components/molecules';
+import {
+  Header,
+  Footer,
+  ContactLanding,
+  ModelCarousel,
+  ModelGrid,
+  HeroVideo,
+  AboutPreview
+} from '@/components/organisms';
 
 /**
  * 전체 컴포넌트 테스트 페이지
@@ -35,18 +43,19 @@ export default function ComponentsTestPage() {
         <div className="text-center">
           <H1>컴포넌트 테스트 페이지</H1>
           <Text size="large" className="mt-4 text-gray-600">
-            Atoms, UI, Bits, Molecules 컴포넌트 전체 시각화
+            Atoms, UI, Bits, Molecules, Organisms 컴포넌트 전체 시각화
           </Text>
         </div>
 
         <Divider />
 
         <Tabs defaultValue="atoms" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="atoms">Atoms</TabsTrigger>
             <TabsTrigger value="ui">shadcn UI</TabsTrigger>
             <TabsTrigger value="bits">React Bits</TabsTrigger>
             <TabsTrigger value="molecules">Molecules</TabsTrigger>
+            <TabsTrigger value="organisms">Organisms</TabsTrigger>
           </TabsList>
 
           {/* Atoms 탭 */}
@@ -321,6 +330,45 @@ export default function ComponentsTestPage() {
           {/* Molecules 탭 */}
           <TabsContent value="molecules" className="space-y-12 mt-8">
             <section>
+              <H2 className="mb-6">SegmentOption 타입</H2>
+              <div className="bg-gray-50 p-8 rounded">
+                <Text size="small" className="text-gray-600">
+                  SegmentOption은 SegmentControl의 옵션을 정의하는 타입입니다.
+                </Text>
+                <pre className="mt-4 p-4 bg-white rounded border text-xs">
+{`type SegmentOption = {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}`}
+                </pre>
+              </div>
+            </section>
+
+            <Divider />
+
+            <section>
+              <H2 className="mb-6">GalleryImage 타입</H2>
+              <div className="bg-gray-50 p-8 rounded">
+                <Text size="small" className="text-gray-600">
+                  GalleryImage는 LightboxGallery에서 사용하는 이미지 타입입니다.
+                </Text>
+                <pre className="mt-4 p-4 bg-white rounded border text-xs">
+{`type GalleryImage = {
+  id: string;
+  url: string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+}`}
+                </pre>
+              </div>
+            </section>
+
+            <Divider />
+
+            <section>
               <H2 className="mb-6">SegmentControl</H2>
               <div className="bg-gray-50 p-8 rounded space-y-6">
                 <div>
@@ -464,6 +512,143 @@ export default function ComponentsTestPage() {
               <Text size="small" className="mt-2 text-gray-600">드래그 앤 드롭 이미지 업로더</Text>
             </section>
           </TabsContent>
+
+          {/* Organisms 탭 */}
+          <TabsContent value="organisms" className="space-y-12 mt-8">
+            <section>
+              <H2 className="mb-6">Header</H2>
+              <div className="bg-gray-50 p-4 rounded">
+                <Header />
+              </div>
+              <Text size="small" className="mt-2 text-gray-600">메인 네비게이션 헤더</Text>
+            </section>
+
+            <Divider />
+
+            <section>
+              <H2 className="mb-6">Footer</H2>
+              <div className="bg-gray-50 p-4 rounded">
+                <Footer />
+              </div>
+              <Text size="small" className="mt-2 text-gray-600">푸터 컴포넌트</Text>
+            </section>
+
+            <Divider />
+
+            <section>
+              <H2 className="mb-6">HeroVideo</H2>
+              <div className="bg-gray-50 p-4 rounded">
+                <HeroVideo />
+              </div>
+              <Text size="small" className="mt-2 text-gray-600">메인 히어로 비디오 섹션</Text>
+            </section>
+
+            <Divider />
+
+            <section>
+              <H2 className="mb-6">AboutPreview</H2>
+              <div className="bg-gray-50 p-4 rounded">
+                <AboutPreview />
+              </div>
+              <Text size="small" className="mt-2 text-gray-600">About 섹션 프리뷰</Text>
+            </section>
+
+            <Divider />
+
+            <section>
+              <H2 className="mb-6">ModelCarousel</H2>
+              <div className="bg-gray-50 p-4 rounded">
+                <ModelCarousel
+                  models={[
+                    {
+                      id: '1',
+                      name: 'KAMI',
+                      slug: 'kami',
+                      profileImage: '/placeholder.jpg',
+                      category: 'ALL' as const,
+                      height: '178',
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                    },
+                    {
+                      id: '2',
+                      name: 'AMIR',
+                      slug: 'amir',
+                      profileImage: '/placeholder.jpg',
+                      category: 'ALL' as const,
+                      height: '185',
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                    },
+                    {
+                      id: '3',
+                      name: 'MONIKA',
+                      slug: 'monika',
+                      profileImage: '/placeholder.jpg',
+                      category: 'ALL' as const,
+                      height: '175',
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                    },
+                  ]}
+                />
+              </div>
+              <Text size="small" className="mt-2 text-gray-600">모델 캐러셀 (자동 슬라이드)</Text>
+            </section>
+
+            <Divider />
+
+            <section>
+              <H2 className="mb-6">ModelGrid</H2>
+              <div className="bg-gray-50 p-4 rounded">
+                <ModelGrid
+                  models={[
+                    {
+                      id: '1',
+                      name: 'KAMI',
+                      slug: 'kami',
+                      profileImage: '/placeholder.jpg',
+                      category: 'ALL' as const,
+                      height: '178',
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                    },
+                    {
+                      id: '2',
+                      name: 'AMIR',
+                      slug: 'amir',
+                      profileImage: '/placeholder.jpg',
+                      category: 'ALL' as const,
+                      height: '185',
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                    },
+                    {
+                      id: '3',
+                      name: 'MONIKA',
+                      slug: 'monika',
+                      profileImage: '/placeholder.jpg',
+                      category: 'ALL' as const,
+                      height: '175',
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                    },
+                  ]}
+                />
+              </div>
+              <Text size="small" className="mt-2 text-gray-600">모델 그리드 레이아웃</Text>
+            </section>
+
+            <Divider />
+
+            <section>
+              <H2 className="mb-6">ContactLanding</H2>
+              <div className="bg-gray-50 p-4 rounded">
+                <ContactLanding />
+              </div>
+              <Text size="small" className="mt-2 text-gray-600">연락처 랜딩 섹션</Text>
+            </section>
+          </TabsContent>
         </Tabs>
 
         <Divider spacing="lg" />
@@ -474,7 +659,8 @@ export default function ComponentsTestPage() {
             <Text size="small">• <strong>Atoms</strong>: 커스텀 기본 컴포넌트 (Image, Link, Typography, Divider)</Text>
             <Text size="small">• <strong>shadcn UI</strong>: 재사용 가능한 UI 컴포넌트 (Button, Input, Card 등)</Text>
             <Text size="small">• <strong>React Bits</strong>: 애니메이션 컴포넌트 (SplitText, AnimatedList, Carousel 등)</Text>
-            <Text size="small">• <strong>Molecules</strong>: 복합 컴포넌트 (SegmentControl, ModelCard, LightboxGallery, ImageUploader)</Text>
+            <Text size="small">• <strong>Molecules</strong>: 복합 컴포넌트 (SegmentControl, ModelCard, LightboxGallery, ImageUploader + 타입)</Text>
+            <Text size="small">• <strong>Organisms</strong>: 페이지 섹션 컴포넌트 (Header, Footer, ModelCarousel, ModelGrid 등)</Text>
             <Text size="small" className="mt-4 text-gray-600">브라우저 창 크기를 조절하여 반응형 디자인을 확인하세요.</Text>
           </div>
         </section>
