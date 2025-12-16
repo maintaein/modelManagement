@@ -11,6 +11,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   // 테스트 후 DB 정리
+  await prisma.casting.deleteMany();
+  await prisma.application.deleteMany();
   await prisma.archive.deleteMany();
   await prisma.model.deleteMany();
   await prisma.admin.deleteMany();

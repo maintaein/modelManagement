@@ -64,3 +64,42 @@ model Admin {
 
   @@index([email])
 }
+
+// 모델 지원 테이블
+model Application {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  phone       String
+  age         Int
+  height      String
+  weight      String
+  instagram   String?
+  portfolio   Json?    // 포트폴리오 이미지 URLs
+  message     String?  @db.Text
+  status      String   @default("PENDING") // PENDING, REVIEWED, ACCEPTED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// 캐스팅 요청 테이블
+model Casting {
+  id          String   @id @default(uuid())
+  company     String
+  contactName String
+  email       String
+  phone       String
+  projectType String   // COMMERCIAL, EDITORIAL, RUNWAY, etc.
+  description String   @db.Text
+  budget      String?
+  shootDate   DateTime?
+  status      String   @default("PENDING") // PENDING, CONTACTED, IN_PROGRESS, COMPLETED, CANCELLED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}

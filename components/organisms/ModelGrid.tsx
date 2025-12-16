@@ -1,8 +1,9 @@
 'use client';
 
-import { ModelCard } from '@/components/molecules/ModelCard';
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Image } from '@/components/atoms/Image';
 import { SegmentControl, type SegmentOption } from '@/components/molecules/SegmentControl';
-import AnimatedList from '@/components/bits/AnimatedList';
 import type { Category } from '@prisma/client';
 
 export interface GridModel {
@@ -38,16 +39,16 @@ export function ModelGrid({
   onCategoryChange,
   onModelClick,
 }: ModelGridProps) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
   if (isLoading) {
     return (
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
+      <section className="py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-3 gap-1 md:gap-4">
+            {[...Array(12)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="aspect-[3/4] bg-gray-200 rounded-lg" />
-                <div className="mt-4 h-4 bg-gray-200 rounded w-3/4" />
-                <div className="mt-2 h-3 bg-gray-200 rounded w-1/2" />
+                <div className="aspect-square bg-gray-200" />
               </div>
             ))}
           </div>
@@ -65,11 +66,11 @@ export function ModelGrid({
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8">
-      <div className="container mx-auto">
+    <section className="py-8 px-4">
+      <div className="max-w-6xl mx-auto">
         {/* 카테고리 필터 */}
         {onCategoryChange && (
-          <div className="mb-12 flex justify-center">
+          <div className="mb-8 flex justify-center">
             <SegmentControl
               options={CATEGORY_OPTIONS}
               value={selectedCategory}
@@ -78,24 +79,58 @@ export function ModelGrid({
           </div>
         )}
 
-        {/* 모델 그리드 */}
-        <AnimatedList
-          items={models.map((model) => (
-            <ModelCard
+        {/* 인스타그램 스타일 그리드 */}
+        <div className="grid grid-cols-3 gap-1 md:gap-4">
+          {models.map((model) => (
+            <motion.div
               key={model.id}
-              id={model.id}
-              name={model.name}
-              imageUrl={model.imageUrl}
-              height={model.height}
-              bust={model.bust}
-              waist={model.waist}
-              hip={model.hip}
-              featured={model.featured}
-              onClick={onModelClick}
-            />
+              className="relative aspect-square cursor-pointer overflow-hidden bg-gray-100"
+              onMouseEnter={() => setHoveredId(model.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              onClick={() => onModelClick?.(model.id)}
+              whileHover={{ scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* 이미지 */}
+              <Image
+                src={model.imageUrl}
+                alt={model.name}
+                fill
+                className="object-cover"
+              />
+
+              {/* 호버 오버레이 */}
+              <motion.div
+                className="absolute inset-0 bg-black/50 flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: hoveredId === model.id ? 1 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="text-center text-white px-4">
+                  <h3 className="text-lg md:text-xl font-bold mb-2">{model.name}</h3>
+                  <div className="flex flex-wrap gap-2 md:gap-4 justify-center text-xs md:text-sm">
+                    {model.height && <span>H: {model.height}</span>}
+                    {model.bust && <span>B: {model.bust}</span>}
+                    {model.waist && <span>W: {model.waist}</span>}
+                    {model.hip && <span>H: {model.hip}</span>}
+                  </div>
+                  {model.category && (
+                    <div className="mt-2 text-xs md:text-sm opacity-80">
+                      {model.category}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+
+              {/* Featured 배지 */}
+              {model.featured && (
+                <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                  ★ FEATURED
+                </div>
+              )}
+            </motion.div>
           ))}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        />
+        </div>
       </div>
     </section>
   );

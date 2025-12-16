@@ -10,9 +10,15 @@ interface CustomImageProps extends Omit<NextImageProps, 'alt'> {
 /**
  * Next.js Image 컴포넌트 래퍼
  */
-export function Image({ alt, className, ...props }: CustomImageProps) {
+export function Image({ alt, className, src, ...props }: CustomImageProps) {
+  // src가 빈 문자열이면 렌더링하지 않음
+  if (!src || src === '') {
+    return null;
+  }
+
   return (
     <NextImage
+      src={src}
       alt={alt}
       className={cn('object-cover', className)}
       {...props}

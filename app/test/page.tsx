@@ -538,7 +538,11 @@ export default function ComponentsTestPage() {
             <section>
               <H2 className="mb-6">HeroVideo</H2>
               <div className="bg-gray-50 p-4 rounded">
-                <HeroVideo />
+                <HeroVideo
+                  videoSrc="https://cdn.pixabay.com/video/2022/10/25/136513-764001516_large.mp4"
+                  title="PLATINUM MANAGEMENT"
+                  subtitle="Where Excellence Meets Opportunity"
+                />
               </div>
               <Text size="small" className="mt-2 text-gray-600">메인 히어로 비디오 섹션</Text>
             </section>
@@ -548,7 +552,25 @@ export default function ComponentsTestPage() {
             <section>
               <H2 className="mb-6">AboutPreview</H2>
               <div className="bg-gray-50 p-4 rounded">
-                <AboutPreview />
+                <AboutPreview
+                  slides={[
+                    {
+                      id: '1',
+                      title: 'LEADING MODEL AGENCY',
+                      description: 'We discover and develop the world\'s most promising models',
+                    },
+                    {
+                      id: '2',
+                      title: 'GLOBAL NETWORK',
+                      description: 'Connected with top fashion brands worldwide',
+                    },
+                    {
+                      id: '3',
+                      title: 'PROFESSIONAL DEVELOPMENT',
+                      description: 'Comprehensive training and career support',
+                    },
+                  ]}
+                />
               </div>
               <Text size="small" className="mt-2 text-gray-600">About 섹션 프리뷰</Text>
             </section>
@@ -563,32 +585,26 @@ export default function ComponentsTestPage() {
                     {
                       id: '1',
                       name: 'KAMI',
-                      slug: 'kami',
-                      profileImage: '/placeholder.jpg',
-                      category: 'ALL' as const,
-                      height: '178',
-                      createdAt: new Date(),
-                      updatedAt: new Date(),
+                      imageUrl: '/images/models/model1.png',
+                      category: 'Fashion',
                     },
                     {
                       id: '2',
                       name: 'AMIR',
-                      slug: 'amir',
-                      profileImage: '/placeholder.jpg',
-                      category: 'ALL' as const,
-                      height: '185',
-                      createdAt: new Date(),
-                      updatedAt: new Date(),
+                      imageUrl: '/images/models/model2.png',
+                      category: 'Commercial',
                     },
                     {
                       id: '3',
                       name: 'MONIKA',
-                      slug: 'monika',
-                      profileImage: '/placeholder.jpg',
-                      category: 'ALL' as const,
-                      height: '175',
-                      createdAt: new Date(),
-                      updatedAt: new Date(),
+                      imageUrl: '/images/models/model1.png',
+                      category: 'Editorial',
+                    },
+                    {
+                      id: '4',
+                      name: 'Kimmi',
+                      imageUrl: '/images/models/model2.png',
+                      category: 'Editorial',
                     },
                   ]}
                 />
@@ -606,32 +622,30 @@ export default function ComponentsTestPage() {
                     {
                       id: '1',
                       name: 'KAMI',
-                      slug: 'kami',
-                      profileImage: '/placeholder.jpg',
-                      category: 'ALL' as const,
+                      imageUrl: '/images/models/model1.png',
                       height: '178',
-                      createdAt: new Date(),
-                      updatedAt: new Date(),
+                      category: 'Fashion',
                     },
                     {
                       id: '2',
                       name: 'AMIR',
-                      slug: 'amir',
-                      profileImage: '/placeholder.jpg',
-                      category: 'ALL' as const,
+                      imageUrl: '/images/models/model2.png',
                       height: '185',
-                      createdAt: new Date(),
-                      updatedAt: new Date(),
+                      category: 'Commercial',
                     },
                     {
                       id: '3',
                       name: 'MONIKA',
-                      slug: 'monika',
-                      profileImage: '/placeholder.jpg',
-                      category: 'ALL' as const,
+                      imageUrl: '/images/models/model1.png',
                       height: '175',
-                      createdAt: new Date(),
-                      updatedAt: new Date(),
+                      category: 'Editorial',
+                    },
+                    {
+                      id: '4',
+                      name: 'Kimmi',
+                      imageUrl: '/images/models/model2.png',
+                      height: '175',
+                      category: 'Editorial',
                     },
                   ]}
                 />

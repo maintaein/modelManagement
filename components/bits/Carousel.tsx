@@ -126,13 +126,24 @@ export default function Carousel({
     const offset = info.offset.x;
     const velocity = info.velocity.x;
     if (offset < -DRAG_BUFFER || velocity < -VELOCITY_THRESHOLD) {
-      if (loop && currentIndex === items.length - 1) {
-        setCurrentIndex(currentIndex + 1);
+      // 오른쪽으로 드래그 (다음 슬라이드)
+      if (loop) {
+        if (currentIndex === items.length - 1) {
+          // 마지막 실제 아이템에서 복제된 첫 번째 아이템으로 이동
+          setCurrentIndex(currentIndex + 1);
+        } else if (currentIndex === carouselItems.length - 1) {
+          // 복제된 첫 번째 아이템에서 다시 드래그 시 두 번째 실제 아이템으로 이동
+          setCurrentIndex(1);
+        } else {
+          setCurrentIndex(prev => prev + 1);
+        }
       } else {
         setCurrentIndex(prev => Math.min(prev + 1, carouselItems.length - 1));
       }
     } else if (offset > DRAG_BUFFER || velocity > VELOCITY_THRESHOLD) {
+      // 왼쪽으로 드래그 (이전 슬라이드)
       if (loop && currentIndex === 0) {
+        // 첫 번째 아이템에서 왼쪽 드래그 시 마지막 실제 아이템으로 이동
         setCurrentIndex(items.length - 1);
       } else {
         setCurrentIndex(prev => Math.max(prev - 1, 0));
