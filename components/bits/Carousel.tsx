@@ -1,0 +1,237 @@
+import { useEffect, useState, useRef, useMemo, type ReactNode } from 'react';
+import { motion, useMotionValue, type PanInfo } from 'motion/react';
+import { FiCircle, FiCode, FiFileText, FiLayers, FiLayout } from 'react-icons/fi';
+
+import './Carousel.css';
+
+interface CarouselItem {
+  title: string;
+  description: string;
+  id: number;
+  icon: ReactNode;
+}
+
+interface CarouselProps {
+  items?: CarouselItem[];
+  baseWidth?: number;
+  autoplay?: boolean;
+  autoplayDelay?: number;
+  pauseOnHover?: boolean;
+  loop?: boolean;
+  round?: boolean;
+}
+
+const DEFAULT_ITEMS: CarouselItem[] = [
+  {
+    title: 'Text Animations',
+    description: 'Cool text animations for your projects.',
+    id: 1,
+    icon: <FiFileText className="carousel-icon" />
+  },
+  {
+    title: 'Animations',
+    description: 'Smooth animations for your projects.',
+    id: 2,
+    icon: <FiCircle className="carousel-icon" />
+  },
+  {
+    title: 'Components',
+    description: 'Reusable components for your projects.',
+    id: 3,
+    icon: <FiLayers className="carousel-icon" />
+  },
+  {
+    title: 'Backgrounds',
+    description: 'Beautiful backgrounds and patterns for your projects.',
+    id: 4,
+    icon: <FiLayout className="carousel-icon" />
+  },
+  {
+    title: 'Common UI',
+    description: 'Common UI components are coming soon!',
+    id: 5,
+    icon: <FiCode className="carousel-icon" />
+  }
+];
+
+const DRAG_BUFFER = 0;
+const VELOCITY_THRESHOLD = 500;
+const GAP = 16;
+const SPRING_OPTIONS = { type: 'spring' as const, stiffness: 300, damping: 30 };
+
+export default function Carousel({
+  items = DEFAULT_ITEMS,
+  baseWidth = 300,
+  autoplay = false,
+  autoplayDelay = 3000,
+  pauseOnHover = false,
+  loop = false,
+  round = false
+}: CarouselProps) {
+  const containerPadding = 16;
+  const itemWidth = baseWidth - containerPadding * 2;
+  const trackItemOffset = itemWidth + GAP;
+
+  const carouselItems = useMemo(() => (loop ? [...items, items[0]] : items), [loop, items]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const x = useMotionValue(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (pauseOnHover && containerRef.current) {
+      const container = containerRef.current;
+      const handleMouseEnter = () => setIsHovered(true);
+      const handleMouseLeave = () => setIsHovered(false);
+      container.addEventListener('mouseenter', handleMouseEnter);
+      container.addEventListener('mouseleave', handleMouseLeave);
+      return () => {
+        container.removeEventListener('mouseenter', handleMouseEnter);
+        container.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, [pauseOnHover]);
+
+  useEffect(() => {
+    if (autoplay && (!pauseOnHover || !isHovered)) {
+      const timer = setInterval(() => {
+        setCurrentIndex(prev => {
+          if (prev === items.length - 1 && loop) {
+            return prev + 1;
+          }
+          if (prev === carouselItems.length - 1) {
+            return loop ? 0 : prev;
+          }
+          return prev + 1;
+        });
+      }, autoplayDelay);
+      return () => clearInterval(timer);
+    }
+  }, [autoplay, autoplayDelay, isHovered, loop, items.length, carouselItems.length, pauseOnHover]);
+
+  const effectiveTransition = isResetting ? { duration: 0 } : SPRING_OPTIONS;
+
+  const handleAnimationComplete = () => {
+    if (loop && currentIndex === carouselItems.length - 1) {
+      setIsResetting(true);
+      x.set(0);
+      setCurrentIndex(0);
+      setTimeout(() => setIsResetting(false), 50);
+    }
+  };
+
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    const offset = info.offset.x;
+    const velocity = info.velocity.x;
+    if (offset < -DRAG_BUFFER || velocity < -VELOCITY_THRESHOLD) {
+      // 오른쪽으로 드래그 (다음 슬라이드)
+      if (loop) {
+        if (currentIndex === items.length - 1) {
+          // 마지막 실제 아이템에서 복제된 첫 번째 아이템으로 이동
+          setCurrentIndex(currentIndex + 1);
+        } else if (currentIndex === carouselItems.length - 1) {
+          // 복제된 첫 번째 아이템에서 다시 드래그 시 두 번째 실제 아이템으로 이동
+          setCurrentIndex(1);
+        } else {
+          setCurrentIndex(prev => prev + 1);
+        }
+      } else {
+        setCurrentIndex(prev => Math.min(prev + 1, carouselItems.length - 1));
+      }
+    } else if (offset > DRAG_BUFFER || velocity > VELOCITY_THRESHOLD) {
+      // 왼쪽으로 드래그 (이전 슬라이드)
+      if (loop && currentIndex === 0) {
+        // 첫 번째 아이템에서 왼쪽 드래그 시 마지막 실제 아이템으로 이동
+        setCurrentIndex(items.length - 1);
+      } else {
+        setCurrentIndex(prev => Math.max(prev - 1, 0));
+      }
+    }
+  };
+
+  const dragProps = loop
+    ? {}
+    : {
+        dragConstraints: {
+          left: -trackItemOffset * (carouselItems.length - 1),
+          right: 0
+        }
+      };
+
+  return (
+    <div
+      ref={containerRef}
+      className={`carousel-container ${round ? 'round' : ''}`}
+      style={{
+        width: `${baseWidth}px`,
+        ...(round && { height: `${baseWidth}px`, borderRadius: '50%' })
+      }}
+    >
+      <motion.div
+        className="carousel-track"
+        drag="x"
+        {...dragProps}
+        style={{
+          width: itemWidth,
+          gap: `${GAP}px`,
+          perspective: 1000,
+          perspectiveOrigin: `${currentIndex * trackItemOffset + itemWidth / 2}px 50%`,
+          x
+        }}
+        onDragEnd={handleDragEnd}
+        animate={{ x: -(currentIndex * trackItemOffset) }}
+        transition={effectiveTransition}
+        onAnimationComplete={handleAnimationComplete}
+      >
+        {carouselItems.map((item, index) => {
+          // rotateY 계산을 인라인으로 수행 (useTransform 대신 계산된 값 사용)
+          const offset = -(currentIndex * trackItemOffset);
+          const itemOffset = -index * trackItemOffset;
+          const distance = offset - itemOffset;
+          const rotateY = (distance / trackItemOffset) * 90;
+
+          return (
+            <motion.div
+              key={index}
+              className={`carousel-item ${round ? 'round' : ''}`}
+              style={{
+                width: itemWidth,
+                height: round ? itemWidth : '100%',
+                ...(round && { borderRadius: '50%' })
+              }}
+              animate={{
+                rotateY: rotateY
+              }}
+              transition={effectiveTransition}
+            >
+              <div className={`carousel-item-header ${round ? 'round' : ''}`}>
+                <span className="carousel-icon-container">{item.icon}</span>
+              </div>
+              <div className="carousel-item-content">
+                <div className="carousel-item-title">{item.title}</div>
+                <p className="carousel-item-description">{item.description}</p>
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+      <div className={`carousel-indicators-container ${round ? 'round' : ''}`}>
+        <div className="carousel-indicators">
+          {items.map((_, index) => (
+            <motion.div
+              key={index}
+              className={`carousel-indicator ${currentIndex % items.length === index ? 'active' : 'inactive'}`}
+              animate={{
+                scale: currentIndex % items.length === index ? 1.2 : 1
+              }}
+              onClick={() => setCurrentIndex(index)}
+              transition={{ duration: 0.15 }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

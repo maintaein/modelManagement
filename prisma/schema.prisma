@@ -18,21 +18,21 @@ enum Category {
 
 // 모델 테이블
 model Model {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
-  slug         String    @unique
+  slug         String   @unique
   category     Category
   nationality  String?
   profileImage String?
   images       Json?
-  bio          String?   @db.Text
+  bio          String?  @db.Text
   height       String?
   measurements String?
   instagram    String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  archives     Archive[]
+  archives Archive[]
 
   @@index([category])
   @@index([slug])
@@ -48,7 +48,7 @@ model Archive {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  model     Model    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  model Model @relation(fields: [modelId], references: [id], onDelete: Cascade)
 
   @@index([modelId])
 }
@@ -63,4 +63,43 @@ model Admin {
   updatedAt DateTime @updatedAt
 
   @@index([email])
+}
+
+// 모델 지원 테이블
+model Application {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  age       Int
+  height    String
+  weight    String
+  instagram String?
+  portfolio Json? // 포트폴리오 이미지 URLs
+  message   String?  @db.Text
+  status    String   @default("PENDING") // PENDING, REVIEWED, ACCEPTED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// 캐스팅 요청 테이블
+model Casting {
+  id          String    @id @default(uuid())
+  company     String
+  contactName String
+  email       String
+  phone       String
+  projectType String // COMMERCIAL, EDITORIAL, RUNWAY, etc.
+  description String    @db.Text
+  budget      String?
+  shootDate   DateTime?
+  status      String    @default("PENDING") // PENDING, CONTACTED, IN_PROGRESS, COMPLETED, CANCELLED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }

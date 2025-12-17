@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+.nyc_output/
+junit.xml
+*.lcov
+jest-results.json
 
 # next.js
 /.next/
@@ -31,15 +35,18 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*
 !.env.example
 
 # vercel
 .vercel
+
+# cypress
+cypress/videos/
+cypress/screenshots/
+
+# lighthouse
+.lighthouseci/
 
 # typescript
 *.tsbuildinfo
@@ -54,5 +61,8 @@ next-env.d.ts
 /public/uploads/*
 !/public/uploads/.gitkeep
 /app/generated/prisma
+
+# Docker volumes (test DB)
+test-db-data/
 
 .mcp.json
