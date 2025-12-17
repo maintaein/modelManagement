@@ -9,9 +9,11 @@ jest.mock('next/navigation', () => ({
 
 // Next.js Link 모킹
 jest.mock('next/link', () => {
-  return ({ children, ...props }: { children: React.ReactNode; href: string; className?: string; 'aria-current'?: string }) => {
-    return <a {...props}>{children}</a>;
+  const MockLink = ({ children, href, className, 'aria-current': ariaCurrent }: { children: React.ReactNode; href: string; className?: string; 'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | 'true' | 'false' | boolean }) => {
+    return <a href={href} className={className} aria-current={ariaCurrent}>{children}</a>;
   };
+  MockLink.displayName = 'MockLink';
+  return MockLink;
 });
 
 describe('AdminSidebar 컴포넌트', () => {

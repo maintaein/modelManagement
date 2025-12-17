@@ -25,7 +25,7 @@ export function useMediaQuery(query: string): boolean {
     return false;
   };
 
-  const [matches, setMatches] = useState<boolean>(getMatches(query));
+  const [matches, setMatches] = useState<boolean>(() => getMatches(query));
 
   useEffect(() => {
     // SSR 환경 체크
@@ -35,15 +35,12 @@ export function useMediaQuery(query: string): boolean {
 
     const matchMedia = window.matchMedia(query);
 
-    // 초기 상태 업데이트 (hydration 대비)
-    setMatches(matchMedia.matches);
-
     // 미디어 쿼리 변경 이벤트 핸들러
     const handleChange = (e: MediaQueryListEvent) => {
       setMatches(e.matches);
     };
 
-    // 이벤트 리스너 등록
+    // 이벤트 리스너 등록 (초기 동기화는 useState의 lazy init에서 처리됨)
     matchMedia.addEventListener('change', handleChange);
 
     // 클린업

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ModelApplyForm, type ModelApplyFormData } from '@/components/organisms/ModelApplyForm';
+import { ModelApplyForm } from '@/components/organisms/ModelApplyForm';
 
 describe('ModelApplyForm 컴포넌트', () => {
   it('폼 제목이 렌더링된다', () => {

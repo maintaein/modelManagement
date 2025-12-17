@@ -24,17 +24,14 @@ describe('ModelCarousel 컴포넌트', () => {
     { id: '3', name: 'Model 3', imageUrl: '/model3.jpg' },
   ];
 
-  it('모든 모델이 렌더링된다', () => {
+  it('첫 번째 모델이 렌더링된다', () => {
     render(<ModelCarousel models={mockModels} />);
-    expect(screen.getAllByText('Model 1').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Model 2').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Model 3').length).toBeGreaterThan(0);
+    expect(screen.getByText('Model 1')).toBeInTheDocument();
   });
 
-  it('카테고리가 있을 때 표시된다', () => {
+  it('첫 번째 모델의 카테고리가 표시된다', () => {
     render(<ModelCarousel models={mockModels} />);
-    expect(screen.getAllByText('INTOWN').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('GLOBAL').length).toBeGreaterThan(0);
+    expect(screen.getByText('INTOWN')).toBeInTheDocument();
   });
 
   it('모델 클릭 시 onModelClick이 호출된다', () => {

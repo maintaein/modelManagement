@@ -44,6 +44,7 @@ const customJestConfig: Config = {
       testEnvironment: 'node',
       setupFilesAfterEnv: ['<rootDir>/jest.setup.integration.ts'],
       testMatch: ['**/__tests__/integration/**/*.test.{ts,tsx}'],
+      maxWorkers: 1,
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
       },

@@ -1,12 +1,7 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ImageUploader } from '@/components/molecules/ImageUploader';
 
 describe('ImageUploader 컴포넌트', () => {
-  const createMockFile = (name: string, size: number, type: string): File => {
-    const file = new File(['test'], name, { type });
-    Object.defineProperty(file, 'size', { value: size });
-    return file;
-  };
 
   it('업로드 영역이 렌더링된다', () => {
     render(<ImageUploader />);

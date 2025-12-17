@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ModelCastingForm, type ModelCastingFormData } from '@/components/organisms/ModelCastingForm';
+import { ModelCastingForm } from '@/components/organisms/ModelCastingForm';
 
 describe('ModelCastingForm 컴포넌트', () => {
   it('폼 제목이 렌더링된다', () => {

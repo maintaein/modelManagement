@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useMemo, type ReactNode } from 'react';
-import { motion, useMotionValue, useTransform, type PanInfo } from 'motion/react';
+import { motion, useMotionValue, type PanInfo } from 'motion/react';
 import { FiCircle, FiCode, FiFileText, FiLayers, FiLayout } from 'react-icons/fi';
 
 import './Carousel.css';
@@ -186,13 +186,11 @@ export default function Carousel({
         onAnimationComplete={handleAnimationComplete}
       >
         {carouselItems.map((item, index) => {
-          const range = [
-            -(index + 1) * trackItemOffset,
-            -index * trackItemOffset,
-            -(index - 1) * trackItemOffset
-          ];
-          const outputRange = [90, 0, -90];
-          const rotateY = useTransform(x, range, outputRange, { clamp: false });
+          // rotateY 계산을 인라인으로 수행 (useTransform 대신 계산된 값 사용)
+          const offset = -(currentIndex * trackItemOffset);
+          const itemOffset = -index * trackItemOffset;
+          const distance = offset - itemOffset;
+          const rotateY = (distance / trackItemOffset) * 90;
 
           return (
             <motion.div
@@ -201,8 +199,10 @@ export default function Carousel({
               style={{
                 width: itemWidth,
                 height: round ? itemWidth : '100%',
-                rotateY: rotateY,
                 ...(round && { borderRadius: '50%' })
+              }}
+              animate={{
+                rotateY: rotateY
               }}
               transition={effectiveTransition}
             >
